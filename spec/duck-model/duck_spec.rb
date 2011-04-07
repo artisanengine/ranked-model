@@ -267,7 +267,7 @@ describe Duck do
       }
 
     end
-
+    
   end
 
 end

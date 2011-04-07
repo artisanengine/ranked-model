@@ -64,6 +64,11 @@ The `ranks` method takes serveral arguments:
       belongs_to :pond
       ranks :swimming_order,
         :with_same => :pond_id    # Ducks belong_to Ponds, make the ranker scoped to one pond
+
+      belongs_to :photoable, :polymorphic => true
+      ranks :position,
+        :with_same => :photoable_type,
+        :and_same  => :photoable_id      # Ducks belong_to Photo and is polymorphic.
       
       scope :walking, where(:walking => true )
       ranks :walking_order,

@@ -19,6 +19,17 @@ ActiveRecord::Schema.define :version => 0 do
     t.string :pond
   end
 
+  create_table :rabbits, :force => true do |t|
+    t.string :name
+  end
+
+  create_table :photos, :force => true do |t|
+    t.string :title
+    t.integer :position
+    t.integer :photoable_id
+    t.string :photoable_type
+  end
+
   create_table :wrong_scope_ducks, :force => true do |t|
     t.string :name
     t.integer :size
@@ -32,8 +43,16 @@ ActiveRecord::Schema.define :version => 0 do
   end
 end
 
-class Duck < ActiveRecord::Base
+class Rabbit < ActiveRecord::Base
+  
+  has_many :photos, :as => :photoable, :dependent => :destroy, :order => :position  
+  
+end
 
+class Duck < ActiveRecord::Base
+  
+  has_many :photos, :as => :photoable, :dependent => :destroy, :order => :position
+  
   include RankedModel
   ranks :row
   ranks :size, :scope => :in_shin_pond
@@ -41,6 +60,15 @@ class Duck < ActiveRecord::Base
 
   scope :in_shin_pond, where(:pond => 'Shin')
 
+end
+
+class Photo < ActiveRecord::Base
+  
+  belongs_to :photoable, :polymorphic => true
+  
+  include RankedModel
+  ranks :position, :with_same => :photoable_id, :and_same => :photoable_type
+  
 end
 
 # Negative examples

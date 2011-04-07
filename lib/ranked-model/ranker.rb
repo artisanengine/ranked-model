@@ -4,13 +4,13 @@ module RankedModel
   class InvalidField < StandardError; end
 
   class Ranker
-    attr_accessor :name, :column, :scope, :with_same
+    attr_accessor :name, :column, :scope, :with_same, :and_same
 
     def initialize name, options={}
       self.name = name.to_sym
       self.column = options[:column] || name
 
-      [ :scope, :with_same ].each do |key|
+      [ :scope, :with_same, :and_same ].each do |key|
         self.send "#{key}=", options[key]
       end
     end
@@ -36,6 +36,10 @@ module RankedModel
 
         if ranker.with_same && !instance.respond_to?(ranker.with_same)
           raise RankedModel::InvalidField, %Q{No field called "#{ranker.with_same}" found in model}
+        end
+        
+        if ranker.and_same && !instance.respond_to?(ranker.and_same)
+          raise RankedModel::InvalidField, %Q{No field called "#{ranker.and_same}" found in model}
         end
       end
 
@@ -178,6 +182,10 @@ module RankedModel
           if ranker.with_same
             _finder = _finder.where \
               instance.class.arel_table[ranker.with_same].eq(instance.attributes["#{ranker.with_same}"])
+              if ranker.and_same
+                _finder = _finder.where \
+                  instance.class.arel_table[ranker.and_same].eq(instance.attributes["#{ranker.and_same}"])
+              end
           end
           if !new_record?
             _finder = _finder.where \

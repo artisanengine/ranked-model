@@ -7,12 +7,14 @@ describe RankedModel::Ranker, 'initialized' do
       :overview,
       :column    => :a_sorting_column,
       :scope     => :a_scope,
-      :with_same => :a_column
+      :with_same => :a_column,
+      :and_same =>  :another_column
   }
 
   its(:name) { should == :overview }
   its(:column) { should == :a_sorting_column }
   its(:scope) { should == :a_scope }
   its(:with_same) { should == :a_column }
+  its(:and_same) { should == :another_column }
 
 end
